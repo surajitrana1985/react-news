@@ -8,11 +8,6 @@ export const fetchTrends = async (searchParam) => {
             `&${key}=${searchParam[key]}`;
     }
     let REQUEST_URL = `${BASE_URL}?${CONSTRUCTED_URL}`;
-    try {
-        const response = await fetch(REQUEST_URL);
-        const json = await response.json();
-        console.log(json);
-    } catch (error) {
-        console.log(error);
-    }
+    const response = await fetch(REQUEST_URL);
+    return await response.json();
 };
