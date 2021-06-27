@@ -2,6 +2,7 @@ import React from 'react';
 import { List } from 'semantic-ui-react';
 
 import styles from '../App.module.css';
+import ArticleItem from './ArticleItem';
 
 const ArticleList = (props) => {
     console.log(props)
@@ -9,7 +10,7 @@ const ArticleList = (props) => {
         <List divided className={styles.list}>
             {
                 props.articles.map((article, index) => (
-                    <List.Item key={article.title + index}>{article.title}</List.Item>
+                    <ArticleItem article={article} key={article.title + index} />
                 ))
             }
         </List>

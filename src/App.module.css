@@ -12,3 +12,17 @@
     max-width: 900 !important;
     margin: 0 auto !important;
 }
+
+.articleItem {
+    padding: 30px !important;
+}
+
+.gridColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.listDescription {
+    margin: 20px 0;
+}
