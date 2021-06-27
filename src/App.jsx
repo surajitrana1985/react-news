@@ -1,9 +1,10 @@
 import { Component } from 'react';
-import { Menu, Input, Image } from 'semantic-ui-react';
+import { Menu, Input, Image, Container, Header } from 'semantic-ui-react';
 
 import { fetchTrends } from './services/news-api.service';
 import styles from './App.module.css';
 import { NEWS_API_KEY } from './config/api-config';
+import ArticleList from './components/ArticleList';
 
 class App extends Component {
 
@@ -33,6 +34,7 @@ class App extends Component {
 	}
 
 	render() {
+		const { articles, apiError } = this.state;
 		return (
 			<div className='App'>
 				<Menu pointing className={styles.header}>
@@ -47,6 +49,11 @@ class App extends Component {
 						</Menu.Item>
 					</Menu.Menu>
 				</Menu>
+				<Container>
+					<Header as="h2">Articles</Header>
+					{articles.length > 0 && <ArticleList articles={articles} />}
+					{apiError !== '' && <p>{{ apiError }}</p>}
+				</Container>
 			</div>
 		);
 	}
