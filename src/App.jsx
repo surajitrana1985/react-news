@@ -1,31 +1,48 @@
-import { Component } from 'react';
-import { Menu, Input, Image, Container, Header } from 'semantic-ui-react';
+import React, { Component } from 'react';
+import { Menu, Image, Container, Header, Dimmer, Loader } from 'semantic-ui-react';
 
 import { fetchTrends } from './services/news-api.service';
 import styles from './App.module.css';
 import { NEWS_API_KEY } from './config/api-config';
 import ArticleList from './components/ArticleList';
+import SearchBar from './components/SearchBar';
 
 class App extends Component {
 
 	state = {
 		articles: [],
+		searchTopic: '',
+		totalResults: 0,
+		loading: false,
 		apiError: ''
 	};
 
-	async componentDidMount() {
-		const searchParam = this.createRequestParam();
+	topicSearch = async (topic) => {
+		this.setState({ loading: true, articles: [] });
+		const searchParam = this.createRequestParam(topic);
 		try {
-			const response = await fetchTrends(searchParam);
-			this.setState({ articles: response.articles });
+			if (searchParam.q !== '') {
+				const response = await fetchTrends(searchParam);
+				if (response && response.articles) {
+					this.setState({
+						articles: response.articles,
+						searchTopic: topic,
+						totalResults: response.totalResults,
+						loading: false
+					});
+				}
+			}
 		} catch (error) {
-			this.setState({ apiError: 'Failed to retrieve articles you searched' });
+			this.setState({
+				apiError: 'Failed to retrieve articles you searched',
+				loading: false
+			});
 		}
 	}
 
-	createRequestParam() {
+	createRequestParam(topic) {
 		return {
-			q: 'apple',
+			q: topic,
 			from: '2021-06-01',
 			to: '2021-06-26',
 			sortBy: 'popularity',
@@ -34,9 +51,11 @@ class App extends Component {
 	}
 
 	render() {
-		const { articles, apiError } = this.state;
+		const {
+			articles, searchTopic, totalResults,
+			loading, apiError } = this.state;
 		return (
-			<div className='App'>
+			<div>
 				<Menu pointing className={styles.header}>
 					<Menu.Item>
 						<div className={styles.logo}>
@@ -45,13 +64,24 @@ class App extends Component {
 					</Menu.Item>
 					<Menu.Menu position='right'>
 						<Menu.Item>
-							<Input icon='search' placeholder='Search...' />
+							<SearchBar topicSearch={this.topicSearch} />
 						</Menu.Item>
 					</Menu.Menu>
 				</Menu>
 				<Container>
-					<Header as="h2">Articles</Header>
-					{articles.length > 0 && <ArticleList articles={articles} />}
+					{loading && (
+						<Dimmer active inverted>
+							<Loader inverted>Loading</Loader>
+						</Dimmer>
+					)}
+					{articles && articles.length > 0 &&
+						(<Header as="h2" className={styles.searchTags}>
+							{searchTopic} search results: Found {totalResults} articles on '{searchTopic}'
+						</Header>)
+					}
+					{articles && articles.length > 0 &&
+						(<ArticleList articles={articles} />)
+					}
 					{apiError !== '' && <p>{{ apiError }}</p>}
 				</Container>
 			</div>

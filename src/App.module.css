@@ -26,3 +26,19 @@
 .listDescription {
     margin: 20px 0;
 }
+
+.searchContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.searchButton {
+    border-color: #2c6839;
+    background-color: #2c6839;
+    color: #fff;
+}
+
+.searchTags {
+    text-align: center;
+    margin-top: 20 !important;
+}

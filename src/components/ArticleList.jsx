@@ -5,7 +5,6 @@ import styles from '../App.module.css';
 import ArticleItem from './ArticleItem';
 
 const ArticleList = (props) => {
-    console.log(props)
     return (
         <List divided className={styles.list}>
             {
