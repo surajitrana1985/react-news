@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Menu, Image, Container, Header, Dimmer, Loader } from 'semantic-ui-react';
 
-import { fetchTrends } from './services/news-api.service';
+import { fetchTrends, latestTrends } from './services/news-api.service';
 import styles from './App.module.css';
 import { NEWS_API_KEY } from './config/api-config';
 import ArticleList from './components/ArticleList';
@@ -14,22 +14,33 @@ class App extends Component {
 		searchTopic: '',
 		totalResults: 0,
 		loading: false,
-		apiError: ''
+		apiError: '',
+		latest: true
 	};
 
+	async componentDidMount() {
+		this.setState({ loading: true, articles: [], latest: true });
+		try {
+			const response = await latestTrends(NEWS_API_KEY);
+			if (response && response.articles) {
+				this.setApplicationState(response, '', true);
+			}
+		} catch (error) {
+			this.setState({
+				apiError: 'Failed to retrieve articles you searched',
+				loading: false
+			});
+		}
+	}
+
 	topicSearch = async (topic) => {
-		this.setState({ loading: true, articles: [] });
+		this.setState({ loading: true, articles: [], latest: false });
 		const searchParam = this.createRequestParam(topic);
 		try {
 			if (searchParam.q !== '') {
 				const response = await fetchTrends(searchParam);
 				if (response && response.articles) {
-					this.setState({
-						articles: response.articles,
-						searchTopic: topic,
-						totalResults: response.totalResults,
-						loading: false
-					});
+					this.setApplicationState(response, topic, false);
 				}
 			}
 		} catch (error) {
@@ -38,6 +49,16 @@ class App extends Component {
 				loading: false
 			});
 		}
+	}
+
+	setApplicationState(response, topic, latest) {
+		this.setState({
+			articles: response.articles,
+			searchTopic: topic,
+			totalResults: response.totalResults,
+			loading: false,
+			latest
+		});
 	}
 
 	createRequestParam(topic) {
@@ -74,9 +95,14 @@ class App extends Component {
 							<Loader inverted>Loading</Loader>
 						</Dimmer>
 					)}
-					{articles && articles.length > 0 &&
+					{!this.state.latest && articles && articles.length > 0 &&
 						(<Header as="h2" className={styles.searchTags}>
 							{searchTopic} search results: Found {totalResults} articles on '{searchTopic}'
+						</Header>)
+					}
+					{this.state.latest && articles && articles.length > 0 &&
+						(<Header as="h2" className={styles.searchTags}>
+							Latest Trends
 						</Header>)
 					}
 					{articles && articles.length > 0 &&
