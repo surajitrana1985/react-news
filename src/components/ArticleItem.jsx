@@ -23,7 +23,7 @@ const ArticleItem = (props) => {
                     </List>
                 </Grid.Column>
                 <Grid.Column width={5}>
-                    <Image src={article.urlToImage} />
+                    <Image src={article.image} />
                 </Grid.Column>
             </Grid>
         </List.Item>

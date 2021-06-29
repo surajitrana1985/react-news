@@ -34,7 +34,7 @@ class SearchBar extends Component {
                         <Form.Input placeholder="Search topic ..."
                             name="topic" value={this.state.searchTopic}
                             onChange={this.handleInputChange} />
-                        <button type="submit" className={styles.searchButton}>Submit</button>
+                        <button type="submit" className={styles.searchButton}>Search</button>
                     </Form.Group>
                 </Form>
             </div>

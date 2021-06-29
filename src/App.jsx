@@ -11,7 +11,7 @@ class App extends Component {
 	state = {
 		articles: [],
 		searchTopic: '',
-		totalResults: 0,
+		totalArticles: 0,
 		loading: false,
 		apiError: '',
 		latest: true
@@ -20,7 +20,7 @@ class App extends Component {
 	NEWS_API_KEY = '';
 
 	async componentDidMount() {
-		this.NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY;
+		this.NEWS_API_KEY = process.env.REACT_APP_G_NEWS_API_KEY;
 		this.setState({ loading: true, articles: [], latest: true });
 		try {
 			const response = await latestTrends(this.NEWS_API_KEY);
@@ -57,7 +57,7 @@ class App extends Component {
 		this.setState({
 			articles: response.articles,
 			searchTopic: topic,
-			totalResults: response.totalResults,
+			totalArticles: response.totalArticles,
 			loading: false,
 			latest
 		});
@@ -66,16 +66,14 @@ class App extends Component {
 	createRequestParam(topic) {
 		return {
 			q: topic,
-			from: '2021-06-01',
-			to: '2021-06-26',
-			sortBy: 'popularity',
-			apiKey: this.NEWS_API_KEY
+			sortBy: 'publishedAt',
+			token: this.NEWS_API_KEY
 		};
 	}
 
 	render() {
 		const {
-			articles, searchTopic, totalResults,
+			articles, searchTopic, totalArticles,
 			loading, apiError } = this.state;
 		return (
 			<div>
@@ -99,7 +97,7 @@ class App extends Component {
 					)}
 					{!this.state.latest && articles && articles.length > 0 &&
 						(<Header as="h2" className={styles.searchTags}>
-							{searchTopic} search results: Found {totalResults} articles on '{searchTopic}'
+							{searchTopic} search results: Found {totalArticles} articles on '{searchTopic}'
 						</Header>)
 					}
 					{this.state.latest && articles && articles.length > 0 &&
