@@ -3,7 +3,6 @@ import { Menu, Image, Container, Header, Dimmer, Loader } from 'semantic-ui-reac
 
 import { fetchTrends, latestTrends } from './services/news-api.service';
 import styles from './App.module.css';
-import { NEWS_API_KEY } from './config/api-config';
 import ArticleList from './components/ArticleList';
 import SearchBar from './components/SearchBar';
 
@@ -18,10 +17,13 @@ class App extends Component {
 		latest: true
 	};
 
+	NEWS_API_KEY = '';
+
 	async componentDidMount() {
+		this.NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY;
 		this.setState({ loading: true, articles: [], latest: true });
 		try {
-			const response = await latestTrends(NEWS_API_KEY);
+			const response = await latestTrends(this.NEWS_API_KEY);
 			if (response && response.articles) {
 				this.setApplicationState(response, '', true);
 			}
@@ -67,7 +69,7 @@ class App extends Component {
 			from: '2021-06-01',
 			to: '2021-06-26',
 			sortBy: 'popularity',
-			apiKey: NEWS_API_KEY
+			apiKey: this.NEWS_API_KEY
 		};
 	}
 
